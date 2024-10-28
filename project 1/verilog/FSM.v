@@ -1,3 +1,4 @@
+/*
 module fsm_with_timer(
 
     input clk,          // Clock input
@@ -5,7 +6,7 @@ module fsm_with_timer(
     input timer_done,   // Timer done signal from the timer module
     output reg start_timer,  // Signal to start the timer
     output reg [1:0] state    // FSM states (00, 01, 10, etc.)
-);
+    );
 
     // Define state encoding
     parameter S0 = 2'b00;
@@ -52,7 +53,7 @@ module fsm_with_timer(
         endcase
     end
 endmodule
-
+*/
 module FSMW(
 
     // INPUTS //
@@ -60,9 +61,8 @@ module FSMW(
 input  wire       power,
 input  wire       clk,
 input  wire       rst,
-input  wire [1:0] program_selection,
-input  wire       task_selection,
-input  wire [1:0] pause_resume,
+input  wire [3:0] program_selection,
+input  wire       pause_resume,
 
     // OUTPUTS //
 
@@ -70,10 +70,8 @@ output reg        valve_in_cold,
 output reg        valve_in_hot,
 output reg        valve_out,
 output reg        motor,
-output reg  [7:0] display,
-output reg        dry_done,
-output reg        wash_done,
-output reg        rinse_done,
+output reg  [7:0] timer_display,
+output reg        program_done,
 output reg        current_state
 );
 
@@ -85,19 +83,19 @@ reg [2:0] next_state;
 
 
 parameter IDLE          = 3'b000 ;
-parameter filling_water = 3'b001 ;
-parameter washing       = 3'b010 ;
+parameter filling_soap  = 3'b001 ;
+parameter filling_water = 3'b010 ;
+parameter washing       = 3'b011 ;
 parameter rinsing       = 3'b100 ;
-parameter drying        = 3'b011 ;
-parameter pause         = 3'b101 ;
-parameter draining      = 3'b110 ;
-parameter no_need       = 3'b111 ;
+parameter drying        = 3'b101 ;
+parameter pause         = 3'b110 ;
+parameter draining      = 3'b111 ;
 
 always @(posedge clk,negedge rst) begin
     if (!rst)
-         current_state <= IDLE; 
-     else 
-         current_state <= next_state; 
+        current_state <= IDLE; 
+    else 
+        current_state <= next_state; 
      
 end
 //////next state logic//////
@@ -217,3 +215,4 @@ always @(*) begin
     endcase
 end
 endmodule
+
