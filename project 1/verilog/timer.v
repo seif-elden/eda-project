@@ -2,17 +2,17 @@ module timer(
     input               clk,            
     input               rst,            
     input               start,          
-    input      [31:0]   duration, 
+    input      [7:0]   duration, 
     output reg          done        
 );
-           reg [31:0]   counter;    
+    reg [7:0]   counter;    
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            counter <= 32'b0;
+            counter <= 7'b0;
             done <= 1'b0;
         end else if (start) begin
-            if (counter == 32'b0) begin
+            if (counter == 7'b0) begin
                 counter <= duration;
                 done <= 1'b0;
             end else begin
