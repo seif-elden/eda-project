@@ -28,8 +28,8 @@ reg [2:0] current_state, next_state;
 parameter IDLE                  = 3'b000;
 parameter FILLING_WATER_SOAP    = 3'b001;
 parameter WASHING               = 3'b010;
-parameter RINSING               = 3'b011;
 parameter DRAINING_WASH         = 3'b100;
+parameter RINSING               = 3'b011;
 parameter DRAINING_RINSE        = 3'b101;
 parameter DRYING                = 3'b110;
 parameter WAIT_FOR_SOAP         = 3'b111;    
@@ -74,11 +74,9 @@ end
 // Next State Logic
 always @(*) begin
     next_state = current_state; // Default to staying in the same state
-    timer_start = 0;
 
     case (current_state)
         IDLE: begin
-            program_done = 0;
             if (power && start && doorclosed) begin
                 case (program_selection)
                     COLD_WASH:      next_state = FILLING_WATER_SOAP;
@@ -97,8 +95,6 @@ always @(*) begin
                 timer_start = 1;
                 duration = FILLING_TIME;
                 if (timer_done) begin
-                    valve_in_cold = 0;
-                    valve_in_hot = 0;
                     next_state = WASHING;
                     timer_start = 0;
                 end
@@ -116,22 +112,18 @@ always @(*) begin
 
 
         WASHING: begin
-            motor = 1;
             duration = WASHING_TIME;
             timer_start = 1;
             if (timer_done) begin
-                motor = 0;
                 next_state =  DRAINING_WASH;
                 timer_start = 0;
             end
         end
 
         DRAINING_WASH: begin
-            valve_out = 1;
             duration = DRAINING_TIME;
             timer_start = 1;
             if (timer_done) begin
-                valve_out = 0;
                 next_state = RINSING;
                 timer_start = 0;
 
@@ -139,33 +131,27 @@ always @(*) begin
         end
 
         RINSING: begin
-            valve_in_cold = 1;
             duration = RINSING_TIME;
             timer_start = 1;
             if (timer_done) begin
-                valve_in_cold = 0;
                 next_state = DRAINING_RINSE;
                 timer_start = 0;
             end
         end
 
         DRAINING_RINSE: begin
-            valve_out = 1;
             duration = DRAINING_TIME;
             timer_start = 1;
             if (timer_done) begin
-                valve_out = 0;
                 next_state = DRYING;
                 timer_start = 0;
             end
         end
 
         DRYING: begin
-            motor = 1;
             duration = DRYING_TIME;
             timer_start = 1;
             if (timer_done) begin
-                motor = 0;
                 program_done = 1;
                 next_state = IDLE;
                 timer_start = 0;
@@ -190,6 +176,10 @@ always @(*) begin
     soap_warning = 0;     // Default to no warning
 
     case (current_state)
+        IDLE : begin
+            program_done = 0;
+            timer_start = 0;
+        end
         FILLING_WATER_SOAP: begin
             if(soap)
                 if (program_selection == COLD_WASH) valve_in_cold = 1;

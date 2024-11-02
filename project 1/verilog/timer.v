@@ -17,7 +17,10 @@ module timer(
                 done <= 1'b0;
             end else begin
                 counter <= counter - 1;
-                if (counter == 1) done <= 1'b1;
+                if (counter == 1)begin
+                    done <= 1'b1;
+                    counter <= counter - 1 ;
+                end
             end
         end
     end
