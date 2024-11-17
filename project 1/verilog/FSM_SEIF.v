@@ -24,15 +24,17 @@ wire       pause_for_soap;
 
 
 // State Definitions
-reg [2:0] current_state, next_state;
-parameter IDLE                  = 3'b000;
-parameter FILLING_WATER_SOAP    = 3'b001;
-parameter WASHING               = 3'b010;
-parameter DRAINING_WASH         = 3'b100;
-parameter RINSING               = 3'b011;
-parameter DRAINING_RINSE        = 3'b101;
-parameter DRYING                = 3'b110;
-parameter WAIT_FOR_SOAP         = 3'b111;    
+reg [3:0] current_state, next_state;
+parameter IDLE                  = 4'b0000;
+parameter FILLING_WATER_SOAP    = 4'b0001;
+parameter WASHING               = 4'b0010;
+parameter DRAINING_WASH         = 4'b0100;
+parameter RINSING               = 4'b0011;
+parameter DRAINING_RINSE        = 4'b0101;
+parameter DRYING                = 4'b0110;
+parameter WAIT_FOR_SOAP         = 4'b0111;   
+parameter ONLY_DRYING           = 4'b1000;
+parameter Finished           = 4'b1001;
 
 
 // Timer Control
@@ -49,18 +51,34 @@ timer timer_inst (
     .done(timer_done)
 );
 
+// state Timer Control
+reg state_timer_start;
+reg [7:0] state_duration;
+wire state_timer_done;
+
+
+// Instantiate Timer Module for state timing
+timer state_timer_inst (
+    .clk(clk),
+    .rst(rst),
+    .start(state_timer_start),
+    .duration(state_duration),
+    .done(state_timer_done)
+);
+
 // Washing Programs
 parameter COLD_WASH     = 3'b000;
 parameter HOT_WASH      = 3'b001;
 parameter RINSING_DRY  = 3'b010;
 parameter ONLY_DRY      = 3'b011;
+reg [3:0] drying_cycle_count;  // Counts the on/off cycles (3 bits for 0-7 range)
 
 // Timing Configuration for Each Step (Example Durations)
-parameter FILLING_TIME   = 8'd10; // Example: 10 cycles
-parameter WASHING_TIME   = 8'd20; // Example: 20 cycles
-parameter RINSING_TIME   = 8'd15; // Example: 15 cycles
+parameter FILLING_TIME   = 8'd8; // Example: 8 cycles
+parameter WASHING_TIME   = 8'd12; // Example: 12 cycles
+parameter RINSING_TIME   = 8'd16; // Example: 16 cycles
 parameter DRAINING_TIME  = 8'd8;  // Example: 8 cycles
-parameter DRYING_TIME    = 8'd12; // Example: 12 cycles
+parameter DRYING_TIME    = 8'd20; // Example: 20 cycles
 
 // State Machine
 always @(posedge clk or posedge rst) begin
@@ -82,7 +100,7 @@ always @(*) begin
                     COLD_WASH:      next_state = FILLING_WATER_SOAP;
                     HOT_WASH:       next_state = FILLING_WATER_SOAP;
                     RINSING_DRY:   next_state = RINSING;
-                    ONLY_DRY:       next_state = DRYING;
+                    ONLY_DRY:       begin next_state = ONLY_DRYING; drying_cycle_count=0; end
                     default:        next_state = IDLE;
                 endcase
             end
@@ -93,10 +111,12 @@ always @(*) begin
                 next_state = WAIT_FOR_SOAP;   // Transition to WAIT_FOR_SOAP if soap is not added
             end else begin
                 timer_start = 1;
-                duration = FILLING_TIME;
-                if (timer_done) begin
+                duration = FILLING_TIME + WASHING_TIME + DRAINING_TIME + 3 ;
+                state_timer_start=1;
+                state_duration = FILLING_TIME/4;
+                if (state_timer_done) begin
                     next_state = WASHING;
-                    timer_start = 0;
+                    state_timer_start = 0;
                 end
             end
         end
@@ -112,51 +132,93 @@ always @(*) begin
 
 
         WASHING: begin
-            duration = WASHING_TIME;
-            timer_start = 1;
-            if (timer_done) begin
-                next_state =  DRAINING_WASH;
-                timer_start = 0;
+            state_timer_start=1;
+            state_duration = WASHING_TIME/4;
+            if (state_timer_done) begin
+                next_state = DRAINING_WASH;
+                state_timer_start = 0;
             end
         end
 
         DRAINING_WASH: begin
-            duration = DRAINING_TIME;
-            timer_start = 1;
-            if (timer_done) begin
-                next_state = RINSING;
-                timer_start = 0;
+            state_timer_start=1;
+            state_duration = DRAINING_TIME/4;
 
+            if (state_timer_done) begin
+                next_state = FILLING_WATER_SOAP;
+                state_timer_start = 0;
+                if (timer_done) begin
+                    next_state = RINSING;
+                    timer_start = 0;
+                end
             end
         end
 
         RINSING: begin
-            duration = RINSING_TIME;
             timer_start = 1;
-            if (timer_done) begin
+            duration = RINSING_TIME+DRAINING_TIME+ + DRYING_TIME + 5;
+            state_timer_start=1;
+            state_duration = RINSING_TIME/4;
+            if (state_timer_done) begin
                 next_state = DRAINING_RINSE;
-                timer_start = 0;
+                state_timer_start = 0;
             end
         end
 
         DRAINING_RINSE: begin
-            duration = DRAINING_TIME;
-            timer_start = 1;
-            if (timer_done) begin
+            state_timer_start=1;
+            state_duration = DRAINING_TIME/4;
+            if (state_timer_done) begin
                 next_state = DRYING;
-                timer_start = 0;
+                state_timer_start = 0;
             end
         end
 
         DRYING: begin
-            duration = DRYING_TIME;
-            timer_start = 1;
-            if (timer_done) begin
-                program_done = 1;
-                next_state = IDLE;
-                timer_start = 0;
+            state_timer_start=1;
+            state_duration = DRYING_TIME/4;
 
+            if (state_timer_done) begin
+                next_state = RINSING ;
+                state_timer_start = 0;
+                if (timer_done) begin
+                    next_state = Finished;
+                    timer_start = 0;
+                end
             end
+        end
+
+        ONLY_DRYING: begin
+            if (!state_timer_start) begin
+                // Start the state timer for DRYING_TIME / 4
+                state_timer_start = 1;
+                state_duration = DRYING_TIME / 4;
+            end
+
+            if (state_timer_done) begin
+                // Toggle motor state
+                motor = !motor; 
+
+                // Increment the drying cycle counter
+                drying_cycle_count = drying_cycle_count + 1;
+
+                // Restart the state timer for the next cycle
+                state_timer_start = 0;
+
+                // If all 4 cycles are complete, transition to IDLE
+                if (drying_cycle_count == 8) begin
+                    motor = 0;  // Ensure motor is off before exiting
+                    drying_cycle_count = 0;  // Reset cycle counter
+                    next_state = Finished;
+                    
+
+                end
+            end
+        end
+
+        Finished : begin
+          program_done = 1 ;
+          next_state = IDLE;
         end
 
         default: begin
