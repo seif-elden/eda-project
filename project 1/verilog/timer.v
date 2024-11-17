@@ -8,7 +8,7 @@ module timer(
     reg [7:0]   counter;    
 
     always @(posedge clk or posedge rst) begin
-        if (rst) begin
+        if (rst || !start ) begin
             counter <= 7'b0;
             done <= 1'b0;
         end else if (start) begin
