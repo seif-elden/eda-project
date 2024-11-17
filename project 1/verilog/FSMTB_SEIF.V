@@ -1,116 +1,128 @@
-`timescale 1ns / 1ps
+`timescale 1ns/1ps
 
 module FSMW_tb;
+    // Inputs
+    reg power;
+    reg clk;
+    reg rst;
+    reg [2:0] program_selection;
+    reg start;
+    reg doorclosed;
+    reg soap;
 
-// Inputs
-reg power;
-reg clk;
-reg rst;
-reg [2:0] program_selection;
-reg start;
-reg doorclosed;
-reg soap;
+    // Outputs
+    wire valve_in_cold;
+    wire valve_in_hot;
+    wire valve_out;
+    wire motor;
+    wire program_done;
+    wire soap_warning;
+    wire soap_in;
 
-// Outputs
-wire valve_in_cold;
-wire valve_in_hot;
-wire valve_out;
-wire motor;
-wire [7:0] timer_display;
-wire program_done;
-wire soap_warning;
-wire soap_in;
+    // Clock generation
+    always #5 clk = ~clk; // 10ns clock period
 
-// Instantiate the FSMW module
-FSMW uut (
-    .power(power),
-    .clk(clk),
-    .rst(rst),
-    .program_selection(program_selection),
-    .start(start),
-    .doorclosed(doorclosed),
-    .soap(soap),
-    .valve_in_cold(valve_in_cold),
-    .valve_in_hot(valve_in_hot),
-    .valve_out(valve_out),
-    .motor(motor),
-    .timer_display(timer_display),
-    .program_done(program_done),
-    .soap_warning(soap_in)
-);
+    // Instantiate FSMW
+    FSMW uut (
+        .power(power),
+        .clk(clk),
+        .rst(rst),
+        .program_selection(program_selection),
+        .start(start),
+        .doorclosed(doorclosed),
+        .soap(soap),
+        .valve_in_cold(valve_in_cold),
+        .valve_in_hot(valve_in_hot),
+        .valve_out(valve_out),
+        .motor(motor),
+        .program_done(program_done),
+        .soap_warning(soap_warning),
+        .soap_in(soap_in)
+    );
 
-// Clock generation
-always #5 clk = ~clk;  // 10 ns clock period
+    // Test scenarios
+    initial begin
+        // Initialize inputs
+        clk = 0;
+        rst = 1;
+        power = 0;
+        start = 0;
+        doorclosed = 0;
+        soap = 0;
+        program_selection = 3'b000;
 
-// Task to initialize and reset
-task initialize;
-begin
-    power = 1;
-    clk = 0;
-    rst = 1;
-    start = 0;
-    doorclosed = 1;
-    soap = 0;
-    program_selection = 3'b000;
-    #10 rst = 0;
-end
-endtask
+        // Apply reset
+        #10 rst = 0;
 
-// Task to select a program and start FSM
-task select_program(input [2:0] prog_sel);
-begin
-    program_selection = prog_sel;
-    start = 1;
-    #10 start = 0;
-end
-endtask
+        // Test 1: Idle state
+        power = 1;
+        #20;
 
-// Task to simulate soap addition
-task add_soap;
-begin
-    #10 soap = 1;
-end
-endtask
+        // Test 2: Start COLD_WASH program
+        soap = 1;
+        start = 1;
+        doorclosed = 1;
+        program_selection = 3'b001; // COLD_WASH
+        #1000;
 
-// Main test sequence
-initial begin
-    $display("Starting FSM Test Bench");
-    initialize;
+        // Test 3: No soap added, transition to WAIT_FOR_SOAP
+        // soap = 0;
+        // #20;
+        // soap = 1;
+        // #50;
 
-    // Test COLD_WASH program WITH SOAP
-    add_soap;
-    select_program(3'b000);  // COLD_WASH
-    #200;  // Wait for the program to complete
-    soap = 0;
+        // // Test 4: Start HOT_WASH program
+        // rst = 1;
+        // #10 rst = 0;
+        // start = 1;
+        // program_selection = 3'b001; // HOT_WASH
+        // #100;
 
-    // Test COLD_WASH program WITHOUT SOAP
-    select_program(3'b000);  // COLD_WASH
-    #10 add_soap;
-    #200;  // Wait for the program to complete
+        // // Test 5: Start RINSING_DRY program
+        // rst = 1;
+        // #10 rst = 0;
+        // start = 1;
+        // program_selection = 3'b010; // RINSING_DRY
+        // #100;
 
+        // // Test 6: Start ONLY_DRY program
+        // rst = 1;
+        // #10 rst = 0;
+        // start = 1;
+        // program_selection = 3'b011; // ONLY_DRY
+        // #100;
 
-    // Test HOT_WASH program
-    add_soap;
-    select_program(3'b001);  // HOT_WASH
-    #200;
+        // // Test 7: Random transitions and inputs
+        // repeat (5) begin
+        //     #50;
+        //     start = $random % 2;
+        //     soap = $random % 2;
+        //     doorclosed = $random % 2;
+        //     program_selection = $random % 4;
+        // end
 
+        // // Test 8: Invalid program selection
+        // rst = 1;
+        // #10 rst = 0;
+        // start = 1;
+        // program_selection = 3'b111; // Invalid program
+        // #50;
 
-    // Test RINSING_DRY program
-    select_program(3'b010);  // RINSING_DRY
-    #150;
+        // // Test 9: Reset during operation
+        // rst = 1;
+        // #10 rst = 0;
 
-    // Test ONLY_DRY program
-    select_program(3'b011);  // ONLY_DRY
-    #150;
+        // // End simulation
+        // #200;
+        $stop;
+    end
 
-    // Finish simulation
-    $stop;
-end
-
-// Monitor outputs
-initial begin
-    $monitor("Time=%0t | State=%b | Valve_in_cold=%b | Valve_in_hot=%b | Valve_out=%b | Motor=%b | Timer_display=%d | Program_done=%b | Soap_warning=%b | Soap_In=%b", 
-        $time, uut.current_state, valve_in_cold, valve_in_hot, valve_out, motor, timer_display, program_done, soap_warning , soap_in);
-end
-
+    // Monitor signals
+    initial begin
+        $monitor($time, 
+            " Power=%b Start=%b DoorClosed=%b Soap=%b Program=%b | ValveCold=%b ValveHot=%b ValveOut=%b Motor=%b Done=%b Warning=%b SoapIn=%b",
+            power, start, doorclosed, soap, program_selection, 
+            valve_in_cold, valve_in_hot, valve_out, motor, program_done, 
+            soap_warning, soap_in);
+    end
 endmodule

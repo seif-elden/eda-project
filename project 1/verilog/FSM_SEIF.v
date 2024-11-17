@@ -13,9 +13,8 @@ module FSMW(
     output reg        valve_in_hot,
     output reg        valve_out,
     output reg        motor,
-    output reg  [7:0] timer_display,
     output reg        program_done,
-    output reg        soap_warning,      // Add this line
+    output reg        soap_warning,      
     output reg        soap_in           
 
 );
@@ -40,13 +39,15 @@ parameter WAIT_FOR_SOAP         = 3'b111;
 reg timer_start;
 reg [7:0] duration;
 wire timer_done;
+wire [7:0] timer_display;
+
 
 
 // Timer Control For Switching States
 reg timer_start_state;
 reg [7:0] duration_state;
 wire timer_done_state;
-wire time_counter;
+wire [7:0] time_counter;
 
 // Instantiate Timer Module
 timer timer_inst (
@@ -55,19 +56,19 @@ timer timer_inst (
     .start(timer_start),
     .duration(duration),
     .done(timer_done),
-    .counter(timer_display)
+    .counter(timer_display) // Ensure timer_display is a wire
 );
 
-
-// Instantiate Timer Module
+// Instantiate Timer Module for state timing
 timer timer_inst_1 (
     .clk(clk),
     .rst(rst),
     .start(timer_start_state),
     .duration(duration_state),
     .done(timer_done_state),
-    .counter(time_counter)
+    .counter(time_counter) // Ensure time_counter is a wire
 );
+
 
 // Washing Programs
 parameter COLD_WASH     = 3'b000;
@@ -78,7 +79,7 @@ parameter ONLY_DRY      = 3'b011;
 // Timing Configuration for Each Step (Example Durations)
 parameter FILLING_TIME   = 8'd12; // Example: 12 cycles
 parameter WASHING_TIME   = 8'd20; // Example: 20 cycles
-parameter RINSING_TIME   = 8'd15; // Example: 15 cycles
+parameter RINSING_TIME   = 8'd16; // Example: 16 cycles
 parameter DRAINING_TIME  = 8'd8;  // Example: 8 cycles
 parameter DRYING_TIME    = 8'd12; // Example: 12 cycles
 
@@ -101,7 +102,7 @@ always @(*) begin
                 case (program_selection)
                     COLD_WASH:      next_state = FILLING_WATER_SOAP;
                     HOT_WASH:       next_state = FILLING_WATER_SOAP;
-                    RINSING_DRY:   next_state = RINSING;
+                    RINSING_DRY:    next_state = RINSING;
                     ONLY_DRY:       next_state = DRYING;
                     default:        next_state = IDLE;
                 endcase
@@ -113,7 +114,7 @@ always @(*) begin
                 next_state = WAIT_FOR_SOAP;   // Transition to WAIT_FOR_SOAP if soap is not added
             end else begin
                 timer_start = 1;
-                duration = FILLING_TIME + WASHING_TIME + DRAINING_TIME;
+                duration = FILLING_TIME + WASHING_TIME + DRAINING_TIME ;
                 timer_start_state = 1;
                 duration_state = FILLING_TIME / 4;
                 if (timer_done_state) begin
@@ -134,6 +135,7 @@ always @(*) begin
 
 
         WASHING: begin
+            timer_start = 1;
             duration_state = WASHING_TIME / 4;
             timer_start_state = 1;
             if (timer_done_state) begin
@@ -143,16 +145,16 @@ always @(*) begin
         end
 
         DRAINING_WASH: begin
+            timer_start = 1;
             duration_state = DRAINING_TIME / 4;
             timer_start_state = 1;
-            if (timer_done) begin
-                next_state = RINSING;
-                timer_start = 0;
-                timer_start_state = 0;
-            end
-            else if (timer_done_state) begin
+            if (timer_done_state) begin
                 next_state = FILLING_WATER_SOAP;
                 timer_start_state = 0;
+                if (timer_done) begin
+                    next_state = RINSING;
+                    timer_start = 0;
+                end
             end
         end
 
@@ -168,16 +170,17 @@ always @(*) begin
         end
 
         DRAINING_RINSE: begin
+            timer_start = 1;
             duration_state = DRAINING_TIME;
             timer_start_state = 1;
-            if (timer_done) begin
-                next_state = DRYING;
-                timer_start = 0;
-                timer_start_state = 0;
-            end
-            else if (timer_done_state) begin
+
+            if (timer_done_state) begin
                 next_state = RINSING;
                 timer_start_state = 0;
+                if (timer_done) begin
+                    next_state = DRYING;
+                    timer_start = 0;
+                end
             end
         end
 
@@ -205,8 +208,9 @@ always @(*) begin
     valve_in_hot = 0;
     valve_out = 0;
     motor = 0;
-    timer_display = duration;
     soap_warning = 0;     // Default to no warning
+    soap_in = 0;
+
 
     case (current_state)
         IDLE : begin
@@ -227,7 +231,6 @@ always @(*) begin
         end
         RINSING: begin
             valve_in_cold = 1;
-            soap_in = 0;
         end 
 
         DRAINING_RINSE: valve_out = 1;     
