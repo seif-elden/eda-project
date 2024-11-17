@@ -3,9 +3,9 @@ module timer(
     input               rst,            
     input               start,          
     input      [7:0]   duration, 
-    output reg          done        
+    output reg          done,        
+    output reg [7:0]    counter    
 );
-    reg [7:0]   counter;    
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
