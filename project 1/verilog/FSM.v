@@ -1,218 +1,267 @@
-/*
-module fsm_with_timer(
-
-    input clk,          // Clock input
-    input rst,          // Reset input
-    input timer_done,   // Timer done signal from the timer module
-    output reg start_timer,  // Signal to start the timer
-    output reg [1:0] state    // FSM states (00, 01, 10, etc.)
-    );
-
-    // Define state encoding
-    parameter S0 = 2'b00;
-    parameter S1 = 2'b01;
-    parameter S2 = 2'b10;
-
-    reg [1:0] next_state;
-
-    always @(posedge clk or posedge rst) begin
-        if (rst)
-            state <= S0;  // Start at state S0
-        else
-            state <= next_state;
-    end
-
-    // FSM state transitions
-    always @(*) begin
-        case (state)
-            S0: begin
-                start_timer = 1;  // Start the timer
-                if (timer_done)
-                    next_state = S1;
-                else
-                    next_state = S0;
-            end
-
-            S1: begin
-                start_timer = 1;  // Start the timer again for S1
-                if (timer_done)
-                    next_state = S2;
-                else
-                    next_state = S1;
-            end
-
-            S2: begin
-                start_timer = 0;  // Stop the timer in S2
-                next_state = S2;  // Stay in state S2
-            end
-
-            default: begin
-                start_timer = 0;
-                next_state = S0;
-            end
-        endcase
-    end
-endmodule
-*/
 module FSMW(
+    // INPUTS
+    input  wire       power,
+    input  wire       clk,
+    input  wire       rst,
+    input  wire [2:0] program_selection,
+    input  wire       start,
+    input  wire       doorclosed,
+    input  wire       soap,
 
-    // INPUTS //
+    // OUTPUTS
+    output reg        valve_in_cold,
+    output reg        valve_in_hot,
+    output reg        valve_out,
+    output reg        motor,
+    output reg  [7:0] timer_display,
+    output reg        program_done,
+    output reg        soap_warning       // Add this line
 
-input  wire       power,
-input  wire       clk,
-input  wire       rst,
-input  wire [3:0] program_selection,
-input  wire       pause_resume,
-
-    // OUTPUTS //
-
-output reg        valve_in_cold,
-output reg        valve_in_hot,
-output reg        valve_out,
-output reg        motor,
-output reg  [7:0] timer_display,
-output reg        program_done,
-output reg        current_state
 );
 
 
-////// defining the states //////
+wire       pause_for_soap;
 
 
-reg [2:0] next_state;
+// State Definitions
+reg [3:0] current_state, next_state;
+parameter IDLE                  = 4'b0000;
+parameter FILLING_WATER_SOAP    = 4'b0001;
+parameter WASHING               = 4'b0010;
+parameter DRAINING_WASH         = 4'b0100;
+parameter RINSING               = 4'b0011;
+parameter DRAINING_RINSE        = 4'b0101;
+parameter DRYING                = 4'b0110;
+parameter WAIT_FOR_SOAP         = 4'b0111;   
+parameter ONLY_DRYING           = 4'b1000;
+parameter Finished           = 4'b1001;
 
 
-parameter IDLE          = 3'b000 ;
-parameter filling_soap  = 3'b001 ;
-parameter filling_water = 3'b010 ;
-parameter washing       = 3'b011 ;
-parameter rinsing       = 3'b100 ;
-parameter drying        = 3'b101 ;
-parameter pause         = 3'b110 ;
-parameter draining      = 3'b111 ;
+// Timer Control
+reg timer_start;
+reg [7:0] duration;
+wire timer_done;
 
-always @(posedge clk,negedge rst) begin
-    if (!rst)
-        current_state <= IDLE; 
-    else 
-        current_state <= next_state; 
-     
+// Instantiate Timer Module
+timer timer_inst (
+    .clk(clk),
+    .rst(rst),
+    .start(timer_start),
+    .duration(duration),
+    .done(timer_done)
+);
+
+// state Timer Control
+reg state_timer_start;
+reg [7:0] state_duration;
+wire state_timer_done;
+
+
+// Instantiate Timer Module for state timing
+timer state_timer_inst (
+    .clk(clk),
+    .rst(rst),
+    .start(state_timer_start),
+    .duration(state_duration),
+    .done(state_timer_done)
+);
+
+// Washing Programs
+parameter COLD_WASH     = 3'b000;
+parameter HOT_WASH      = 3'b001;
+parameter RINSING_DRY  = 3'b010;
+parameter ONLY_DRY      = 3'b011;
+reg [3:0] drying_cycle_count;  // Counts the on/off cycles (3 bits for 0-7 range)
+
+// Timing Configuration for Each Step (Example Durations)
+parameter FILLING_TIME   = 8'd8; // Example: 8 cycles
+parameter WASHING_TIME   = 8'd12; // Example: 12 cycles
+parameter RINSING_TIME   = 8'd16; // Example: 16 cycles
+parameter DRAINING_TIME  = 8'd8;  // Example: 8 cycles
+parameter DRYING_TIME    = 8'd20; // Example: 20 cycles
+
+// State Machine
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        current_state <= IDLE;
+    end else begin
+        current_state <= next_state;
+    end
 end
-//////next state logic//////
+
+// Next State Logic
 always @(*) begin
+    next_state = current_state; // Default to staying in the same state
+
     case (current_state)
-        IDLE :          begin
-                        
-                        
+        IDLE: begin
+            if (power && start && doorclosed) begin
+                case (program_selection)
+                    COLD_WASH:      next_state = FILLING_WATER_SOAP;
+                    HOT_WASH:       next_state = FILLING_WATER_SOAP;
+                    RINSING_DRY:   next_state = RINSING;
+                    ONLY_DRY:       begin next_state = ONLY_DRYING; drying_cycle_count=0; end
+                    default:        next_state = IDLE;
+                endcase
+            end
+        end
 
+        FILLING_WATER_SOAP: begin
+            if (!soap) begin
+                next_state = WAIT_FOR_SOAP;   // Transition to WAIT_FOR_SOAP if soap is not added
+            end else begin
+                timer_start = 1;
+                duration = FILLING_TIME + WASHING_TIME + DRAINING_TIME + 3 ;
+                state_timer_start=1;
+                state_duration = FILLING_TIME/4;
+                if (state_timer_done) begin
+                    next_state = WASHING;
+                    state_timer_start = 0;
+                end
+            end
+        end
 
-                        end   
-        filling_water : begin
-            
-
-
-
-
-                        end
-        washing :       begin
-            
-
-
-
-
-                        end
-        rinsing :       begin
-            
-
-
-
-                        end 
-        drying :        begin
-            
-
-
-
-                        end 
-        pause :         begin
-            
-
-
-
-
-                        end    
-        draining :      begin
-            
+        WAIT_FOR_SOAP: begin
+            if (soap) begin
+                next_state = FILLING_WATER_SOAP;  // Resume filling when soap is added and pause_for_soap is pressed
+            end else begin
+                next_state = WAIT_FOR_SOAP;       // Remain in WAIT_FOR_SOAP state
+            end
+        end
 
 
 
+        WASHING: begin
+            state_timer_start=1;
+            state_duration = WASHING_TIME/4;
+            if (state_timer_done) begin
+                next_state = DRAINING_WASH;
+                state_timer_start = 0;
+            end
+        end
 
-                        end 
-        default :       begin
-            
+        DRAINING_WASH: begin
+            state_timer_start=1;
+            state_duration = DRAINING_TIME/4;
 
+            if (state_timer_done) begin
+                next_state = FILLING_WATER_SOAP;
+                state_timer_start = 0;
+                if (timer_done) begin
+                    next_state = RINSING;
+                    timer_start = 0;
+                end
+            end
+        end
 
+        RINSING: begin
+            timer_start = 1;
+            duration = RINSING_TIME+DRAINING_TIME+ + DRYING_TIME + 5;
+            state_timer_start=1;
+            state_duration = RINSING_TIME/4;
+            if (state_timer_done) begin
+                next_state = DRAINING_RINSE;
+                state_timer_start = 0;
+            end
+        end
 
+        DRAINING_RINSE: begin
+            state_timer_start=1;
+            state_duration = DRAINING_TIME/4;
+            if (state_timer_done) begin
+                next_state = DRYING;
+                state_timer_start = 0;
+            end
+        end
 
-                        end         
-    endcase
-end    
-//////output logic//////
-always @(*) begin
-    case (current_state)
-        IDLE :          begin
-                        
-                        
+        DRYING: begin
+            state_timer_start=1;
+            state_duration = DRYING_TIME/4;
 
+            if (state_timer_done) begin
+                next_state = RINSING ;
+                state_timer_start = 0;
+                if (timer_done) begin
+                    next_state = Finished;
+                    timer_start = 0;
+                end
+            end
+        end
 
-                        end   
-        filling_water : begin
-            
+        ONLY_DRYING: begin
+            if (!state_timer_start) begin
+                // Start the state timer for DRYING_TIME / 4
+                state_timer_start = 1;
+                state_duration = DRYING_TIME / 4;
+            end
 
+            if (state_timer_done) begin
+                // Toggle motor state
+                motor = !motor; 
 
+                // Increment the drying cycle counter
+                drying_cycle_count = drying_cycle_count + 1;
 
+                // Restart the state timer for the next cycle
+                state_timer_start = 0;
 
-                        end
-        washing :       begin
-            
+                // If all 4 cycles are complete, transition to IDLE
+                if (drying_cycle_count == 8) begin
+                    motor = 0;  // Ensure motor is off before exiting
+                    drying_cycle_count = 0;  // Reset cycle counter
+                    next_state = Finished;
+                    
 
+                end
+            end
+        end
 
+        Finished : begin
+          program_done = 1 ;
+          next_state = IDLE;
+        end
 
-
-                        end
-        rinsing :       begin
-            
-
-
-
-                        end 
-        drying :        begin
-            
-
-
-
-                        end 
-        pause :         begin
-            
-
-
-
-
-                        end    
-        draining :      begin
-            
-
-
-
-
-                        end 
-        default :       begin
-            
-
-
-
-
-                        end         
+        default: begin
+            next_state = IDLE;
+        end
     endcase
 end
+
+// Output Control Logic
+always @(*) begin
+    // Default Output Values
+    valve_in_cold = 0;
+    valve_in_hot = 0;
+    valve_out = 0;
+    motor = 0;
+    timer_display = duration;
+    soap_warning = 0;     // Default to no warning
+
+    case (current_state)
+        IDLE : begin
+            program_done = 0;
+            timer_start = 0;
+        end
+        FILLING_WATER_SOAP: begin
+            if(soap)
+                if (program_selection == COLD_WASH) valve_in_cold = 1;
+                else if (program_selection == HOT_WASH) valve_in_hot = 1;
+        end
+        WAIT_FOR_SOAP: begin
+            soap_warning = 1;   // Show soap warning
+        end
+        WASHING: motor = 1;
+        RINSING: valve_in_cold = 1;
+
+        DRAINING_RINSE: valve_out = 1;     
+        DRAINING_WASH: valve_out = 1;
+
+        DRYING: motor = 1;
+       
+        default: begin
+            // No active outputs in IDLE or invalid state
+        end
+    endcase
+end
+
 endmodule
-
