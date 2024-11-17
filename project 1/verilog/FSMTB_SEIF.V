@@ -19,6 +19,7 @@ wire motor;
 wire [7:0] timer_display;
 wire program_done;
 wire soap_warning;
+wire soap_in;
 
 // Instantiate the FSMW module
 FSMW uut (
@@ -35,7 +36,7 @@ FSMW uut (
     .motor(motor),
     .timer_display(timer_display),
     .program_done(program_done),
-    .soap_warning(soap_warning)
+    .soap_warning(soap_in)
 );
 
 // Clock generation
@@ -108,8 +109,8 @@ end
 
 // Monitor outputs
 initial begin
-    $monitor("Time=%0t | State=%b | Valve_in_cold=%b | Valve_in_hot=%b | Valve_out=%b | Motor=%b | Timer_display=%d | Program_done=%b | Soap_warning=%b", 
-        $time, uut.current_state, valve_in_cold, valve_in_hot, valve_out, motor, timer_display, program_done, soap_warning);
+    $monitor("Time=%0t | State=%b | Valve_in_cold=%b | Valve_in_hot=%b | Valve_out=%b | Motor=%b | Timer_display=%d | Program_done=%b | Soap_warning=%b | Soap_In=%b", 
+        $time, uut.current_state, valve_in_cold, valve_in_hot, valve_out, motor, timer_display, program_done, soap_warning , soap_in);
 end
 
 endmodule
