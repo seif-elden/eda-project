@@ -78,32 +78,32 @@ initial begin
 
     // Test COLD_WASH program WITH SOAP
     add_soap;
-    select_program(3'b000);  // COLD_WASH
+    select_program(3'b001);  // COLD_WASH
     #1200;  // Wait for the program to complete
     soap = 0;
 
-    // Test COLD_WASH program WITHOUT SOAP
-    select_program(3'b000);  // COLD_WASH
-    #100 add_soap;
-    #1200;  // Wait for the program to complete
-    soap = 0;
+    // // Test COLD_WASH program WITHOUT SOAP
+    // select_program(3'b000);  // COLD_WASH
+    // #100 add_soap;
+    // #1200;  // Wait for the program to complete
+    // soap = 0;
 
 
-    // Test HOT_WASH program
-    add_soap;
-    select_program(3'b001);  // HOT_WASH
-    #1200;
-    soap = 0;
+    // // Test HOT_WASH program
+    // add_soap;
+    // select_program(3'b001);  // HOT_WASH
+    // #1200;
+    // soap = 0;
 
 
 
-    // Test RINSING_DRY program
-    select_program(3'b010);  // RINSING_DRY
-    #600;
+    // // Test RINSING_DRY program
+    // select_program(3'b010);  // RINSING_DRY
+    // #600;
 
-    // Test ONLY_DRY program
-    select_program(3'b011);  // ONLY_DRY
-    #1000;
+    // // Test ONLY_DRY program
+    // select_program(3'b011);  // ONLY_DRY
+    // #1000;
 
     // Finish simulation
     $stop;
