@@ -12,10 +12,11 @@ module FSMW(
     output reg        valve_in_cold,
     output reg        valve_in_hot,
     output reg        valve_out,
-    output reg        motor,
+    output reg  [1:0] motor,
     output reg  [7:0] timer_display,
     output reg        program_done,
-    output reg        soap_warning       // Add this line
+    output reg        soap_warning  ,
+    output reg        soap_in    
 
 );
 
@@ -69,16 +70,20 @@ timer state_timer_inst (
 // Washing Programs
 parameter COLD_WASH     = 3'b000;
 parameter HOT_WASH      = 3'b001;
-parameter RINSING_DRY  = 3'b010;
+parameter RINSING_DRY   = 3'b010;
 parameter ONLY_DRY      = 3'b011;
+parameter WARM_WASH     = 3'b100;
+
 reg [3:0] drying_cycle_count;  // Counts the on/off cycles (3 bits for 0-7 range)
 
 // Timing Configuration for Each Step (Example Durations)
 parameter FILLING_TIME   = 8'd8; // Example: 8 cycles
 parameter WASHING_TIME   = 8'd12; // Example: 12 cycles
-parameter RINSING_TIME   = 8'd16; // Example: 16 cycles
 parameter DRAINING_TIME  = 8'd8;  // Example: 8 cycles
-parameter DRYING_TIME    = 8'd20; // Example: 20 cycles
+
+parameter RINSING_TIME   = 8'd9; // Example: 9 cycles
+parameter R_DRAINING_TIME  = 8'd15;  // Example: 15 cycles
+parameter DRYING_TIME    = 8'd12; // Example: 12 cycles
 
 // State Machine
 always @(posedge clk or posedge rst) begin
@@ -97,8 +102,7 @@ always @(*) begin
         IDLE: begin
             if (power && start && doorclosed) begin
                 case (program_selection)
-                    COLD_WASH:      next_state = FILLING_WATER_SOAP;
-                    HOT_WASH:       next_state = FILLING_WATER_SOAP;
+                    COLD_WASH,HOT_WASH,WARM_WASH:   next_state = FILLING_WATER_SOAP; 
                     RINSING_DRY:   next_state = RINSING;
                     ONLY_DRY:       begin next_state = ONLY_DRYING; drying_cycle_count=0; end
                     default:        next_state = IDLE;
@@ -111,7 +115,7 @@ always @(*) begin
                 next_state = WAIT_FOR_SOAP;   // Transition to WAIT_FOR_SOAP if soap is not added
             end else begin
                 timer_start = 1;
-                duration = FILLING_TIME + WASHING_TIME + DRAINING_TIME + 3 ;
+                duration = FILLING_TIME + WASHING_TIME + DRAINING_TIME + 22 ;
                 state_timer_start=1;
                 state_duration = FILLING_TIME/4;
                 if (state_timer_done) begin
@@ -156,9 +160,9 @@ always @(*) begin
 
         RINSING: begin
             timer_start = 1;
-            duration = RINSING_TIME+DRAINING_TIME+ + DRYING_TIME + 5;
+            duration = RINSING_TIME + R_DRAINING_TIME + DRYING_TIME + 16;
             state_timer_start=1;
-            state_duration = RINSING_TIME/4;
+            state_duration = RINSING_TIME/3;
             if (state_timer_done) begin
                 next_state = DRAINING_RINSE;
                 state_timer_start = 0;
@@ -167,7 +171,7 @@ always @(*) begin
 
         DRAINING_RINSE: begin
             state_timer_start=1;
-            state_duration = DRAINING_TIME/4;
+            state_duration = R_DRAINING_TIME/3;
             if (state_timer_done) begin
                 next_state = DRYING;
                 state_timer_start = 0;
@@ -176,7 +180,7 @@ always @(*) begin
 
         DRYING: begin
             state_timer_start=1;
-            state_duration = DRYING_TIME/4;
+            state_duration = DRYING_TIME/3;
 
             if (state_timer_done) begin
                 next_state = RINSING ;
@@ -234,8 +238,8 @@ always @(*) begin
     valve_in_hot = 0;
     valve_out = 0;
     motor = 0;
-    timer_display = duration;
     soap_warning = 0;     // Default to no warning
+    soap_in=0;
 
     case (current_state)
         IDLE : begin
@@ -244,8 +248,12 @@ always @(*) begin
         end
         FILLING_WATER_SOAP: begin
             if(soap)
+            begin
+                soap_in=1;
                 if (program_selection == COLD_WASH) valve_in_cold = 1;
-                else if (program_selection == HOT_WASH) valve_in_hot = 1;
+                else if (program_selection == HOT_WASH) valve_in_hot = 1; 
+                else if (program_selection == WARM_WASH) begin valve_in_hot = 1;valve_in_cold = 1; end  
+            end
         end
         WAIT_FOR_SOAP: begin
             soap_warning = 1;   // Show soap warning
@@ -256,7 +264,7 @@ always @(*) begin
         DRAINING_RINSE: valve_out = 1;     
         DRAINING_WASH: valve_out = 1;
 
-        DRYING: motor = 1;
+        DRYING: motor = 2;
        
         default: begin
             // No active outputs in IDLE or invalid state
