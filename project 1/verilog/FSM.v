@@ -1,3 +1,18 @@
+// FILE NAME: FSM.v
+// TYPE: module
+// DEPARTMENT: computer engineering and software systems
+// AUTHOR: 7r7r
+// AUTHOR EMAIL: 7r7r@gmail.com
+//------------------------------------------------
+// Release history
+// VERSION DATE AUTHOR DESCRIPTION
+// 1.0 19/11/2024 7r7r elsayed ali gad
+//------------------------------------------------
+// KEYWORDS: washing machine, multi clock input washing machine
+//------------------------------------------------
+// PURPOSE: finite state machine act as controller for the washing machine
+
+
 module FSMW(
     // INPUTS
     input  wire       power,
@@ -209,37 +224,66 @@ always @(*) begin
                 end
             end
         end
-
         ONLY_DRYING: begin
+
             total_timer_start = 1; 
             total_duration = DRYING_TIME;
+
             if (!state_timer_start) begin
-                // Start the state timer for DRYING_TIME / 4
+                
                 state_timer_start = 1;
                 state_duration = DRYING_TIME / 4;
-                
             end
-
+        
             if (state_timer_done) begin
                 // Toggle motor state
-                motor = !motor; 
-
-                // Increment the drying cycle counter
-                drying_cycle_count = drying_cycle_count + 1;
-
-                // Restart the state timer for the next cycle
-                state_timer_start = 0;
-
-                // If all 4 cycles are complete, transition to IDLE
-                if (drying_cycle_count == 8) begin
-                    motor = 0;  // Ensure motor is off before exiting
-                    drying_cycle_count = 0;  // Reset cycle counter
+                motor = (motor == 2'b00) ? 2'b10 : 2'b00; 
+        
+                // Restart the state timer
+                state_timer_start = 0; 
+        
+                if (total_timer_done) begin
+                    motor = 2'b00; 
+                    total_timer_start = 0 ;  
+                    drying_cycle_count = 0;
                     next_state = Finished;
-                    
-
+                    program_done = 1 ;
                 end
             end
         end
+        
+        // ONLY_DRYING: begin
+        //     total_timer_start = 1; 
+        //     total_duration = DRYING_TIME;
+        //     if (!state_timer_start) begin
+        //         // Start the state timer for DRYING_TIME / 4
+        //         state_timer_start = 1;
+        //         state_duration = DRYING_TIME / 4;
+                
+        //     end
+
+        //     if (state_timer_done) begin
+        //         // Toggle motor state
+        //         motor = !motor; 
+
+        //         // Increment the drying cycle counter
+        //         drying_cycle_count = drying_cycle_count + 1;
+
+        //         // Restart the state timer for the next cycle
+        //         state_timer_start = 0;
+
+        //         // If all 4 cycles are complete, transition to IDLE
+        //         if (drying_cycle_count == 8) begin
+        //             motor = 0;  // Ensure motor is off before exiting
+        //             drying_cycle_count = 0;  // Reset cycle counter
+        //             next_state = Finished;
+                    
+
+        //         end
+        //     end
+        // end
+
+        
 
         Finished : begin
           program_done = 1 ;
