@@ -306,4 +306,76 @@ always @(*) begin
     endcase
 end
 
+
+    // PSL: State Transition Assertions
+    /** 
+     * @psl default clock = (posedge clk);
+     * @psl IDLE_to_FILLING_WATER_SOAP: assert always 
+     *      ((current_state == IDLE && power && start && doorclosed && 
+     *        (program_selection == COLD_WASH || program_selection == HOT_WASH || program_selection == WARM_WASH)) 
+     *       -> next_state == FILLING_WATER_SOAP);
+     */
+
+    /** 
+     * @psl FILLING_WATER_SOAP_to_WAIT_FOR_SOAP: assert always 
+     *      ((current_state == FILLING_WATER_SOAP && !soap) 
+     *       -> next_state == WAIT_FOR_SOAP);
+     */
+
+
+    // Timer Control Properties
+    /** 
+     * @psl Timer_Start_in_FILLING_WATER_SOAP: assert always 
+     *      (current_state == FILLING_WATER_SOAP -> timer_start == 1);
+     */
+
+    /** 
+     * @psl Total_Timer_Start_in_ONLY_DRYING: assert always 
+     *      (current_state == ONLY_DRYING -> total_timer_start == 1);
+     */
+
+    // Motor Toggling in ONLY_DRYING
+    /** 
+     * @psl Motor_Toggle_in_ONLY_DRYING: assert always 
+     *      (current_state == ONLY_DRYING -> motor != $past(motor));
+     */
+
+    /** 
+     * @psl Exit_ONLY_DRYING_on_Timer_Done: assert always 
+     *      (current_state == ONLY_DRYING && total_timer_done -> next_state == Finished);
+     */
+
+    // Final State Verification
+    /** 
+     * @psl Finished_State_Reached: assert always 
+     *      (current_state == Finished -> program_done == 1);
+     */
+
+     // PSL: Output Verification
+    /**
+    * @psl Valve_Control_in_FILLING_WATER_SOAP: assert always 
+    *      ((current_state == FILLING_WATER_SOAP && soap) -> 
+    *      ((program_selection == COLD_WASH -> valve_in_cold == 1) && 
+    *       (program_selection == HOT_WASH -> valve_in_hot == 1) && 
+    *       (program_selection == WARM_WASH -> (valve_in_cold == 1 && valve_in_hot == 1))));
+    */
+
+    /**
+    * @psl Soap_Warning_in_WAIT_FOR_SOAP: assert always 
+    *      (current_state == WAIT_FOR_SOAP -> soap_warning == 1);
+    */
+
+    /**
+    * @psl Motor_Control_in_WASHING: assert always 
+    *      (current_state == WASHING -> motor == 1);
+    */
+
+    /**
+    * @psl Program_Done_in_Finished: assert always 
+    *      (current_state == Finished -> program_done == 1);
+    */
+
+
+
+
 endmodule
