@@ -101,7 +101,6 @@ parameter RINSING_DRY   = 3'b010;
 parameter ONLY_DRY      = 3'b011;
 parameter WARM_WASH     = 3'b100;
 
-reg [3:0] drying_cycle_count;  // Counts the on/off cycles (3 bits for 0-7 range)
 
 // Timing Configuration for Each Step (Example Durations)
 parameter FILLING_TIME   = 8'd8; // Example: 8 cycles
@@ -131,7 +130,7 @@ always @(*) begin
                 case (program_selection)
                     COLD_WASH,HOT_WASH,WARM_WASH:   next_state = FILLING_WATER_SOAP; 
                     RINSING_DRY:   next_state = RINSING;
-                    ONLY_DRY:       begin next_state = ONLY_DRYING; drying_cycle_count=0; end
+                    ONLY_DRY:      next_state = ONLY_DRYING; 
                     default:        next_state = IDLE;
                 endcase
             end
@@ -227,61 +226,28 @@ always @(*) begin
         ONLY_DRYING: begin
 
             total_timer_start = 1; 
-            total_duration = DRYING_TIME;
+            total_duration = DRYING_TIME + 6 ;
 
             if (!state_timer_start) begin
-                
                 state_timer_start = 1;
                 state_duration = DRYING_TIME / 4;
             end
         
             if (state_timer_done) begin
                 // Toggle motor state
-                motor = (motor == 2'b00) ? 2'b10 : 2'b00; 
-        
+                motor = 2'b00; 
                 // Restart the state timer
                 state_timer_start = 0; 
         
                 if (total_timer_done) begin
                     motor = 2'b00; 
                     total_timer_start = 0 ;  
-                    drying_cycle_count = 0;
                     next_state = Finished;
                     program_done = 1 ;
                 end
-            end
+            end 
         end
         
-        // ONLY_DRYING: begin
-        //     total_timer_start = 1; 
-        //     total_duration = DRYING_TIME;
-        //     if (!state_timer_start) begin
-        //         // Start the state timer for DRYING_TIME / 4
-        //         state_timer_start = 1;
-        //         state_duration = DRYING_TIME / 4;
-                
-        //     end
-
-        //     if (state_timer_done) begin
-        //         // Toggle motor state
-        //         motor = !motor; 
-
-        //         // Increment the drying cycle counter
-        //         drying_cycle_count = drying_cycle_count + 1;
-
-        //         // Restart the state timer for the next cycle
-        //         state_timer_start = 0;
-
-        //         // If all 4 cycles are complete, transition to IDLE
-        //         if (drying_cycle_count == 8) begin
-        //             motor = 0;  // Ensure motor is off before exiting
-        //             drying_cycle_count = 0;  // Reset cycle counter
-        //             next_state = Finished;
-                    
-
-        //         end
-        //     end
-        // end
 
         
 
@@ -328,17 +294,88 @@ always @(*) begin
         end
         WASHING: motor = 1;
         RINSING: valve_in_cold = 1;
-        ONLY_DRY : motor = 1; 
-
         DRAINING_RINSE: valve_out = 1;     
         DRAINING_WASH: valve_out = 1;
 
         DRYING: motor = 2;
+        ONLY_DRYING: motor = 2;
        
         default: begin
             // No active outputs in IDLE or invalid state
         end
     endcase
 end
+
+
+    // PSL: State Transition Assertions
+    /** 
+     * @psl default clock = (posedge clk);
+     * @psl IDLE_to_FILLING_WATER_SOAP: assert always 
+     *      ((current_state == IDLE && power && start && doorclosed && 
+     *        (program_selection == COLD_WASH || program_selection == HOT_WASH || program_selection == WARM_WASH)) 
+     *       -> next_state == FILLING_WATER_SOAP);
+     */
+
+    /** 
+     * @psl FILLING_WATER_SOAP_to_WAIT_FOR_SOAP: assert always 
+     *      ((current_state == FILLING_WATER_SOAP && !soap) 
+     *       -> next_state == WAIT_FOR_SOAP);
+     */
+
+
+    // Timer Control Properties
+    /** 
+     * @psl Timer_Start_in_FILLING_WATER_SOAP: assert always 
+     *      (current_state == FILLING_WATER_SOAP -> timer_start == 1);
+     */
+
+    /** 
+     * @psl Total_Timer_Start_in_ONLY_DRYING: assert always 
+     *      (current_state == ONLY_DRYING -> total_timer_start == 1);
+     */
+
+    // Motor Toggling in ONLY_DRYING
+    /** 
+     * @psl Motor_Toggle_in_ONLY_DRYING: assert always 
+     *      (current_state == ONLY_DRYING -> motor != $past(motor));
+     */
+
+    /** 
+     * @psl Exit_ONLY_DRYING_on_Timer_Done: assert always 
+     *      (current_state == ONLY_DRYING && total_timer_done -> next_state == Finished);
+     */
+
+    // Final State Verification
+    /** 
+     * @psl Finished_State_Reached: assert always 
+     *      (current_state == Finished -> program_done == 1);
+     */
+
+     // PSL: Output Verification
+    /**
+    * @psl Valve_Control_in_FILLING_WATER_SOAP: assert always 
+    *      ((current_state == FILLING_WATER_SOAP && soap) -> 
+    *      ((program_selection == COLD_WASH -> valve_in_cold == 1) && 
+    *       (program_selection == HOT_WASH -> valve_in_hot == 1) && 
+    *       (program_selection == WARM_WASH -> (valve_in_cold == 1 && valve_in_hot == 1))));
+    */
+
+    /**
+    * @psl Soap_Warning_in_WAIT_FOR_SOAP: assert always 
+    *      (current_state == WAIT_FOR_SOAP -> soap_warning == 1);
+    */
+
+    /**
+    * @psl Motor_Control_in_WASHING: assert always 
+    *      (current_state == WASHING -> motor == 1);
+    */
+
+    /**
+    * @psl Program_Done_in_Finished: assert always 
+    *      (current_state == Finished -> program_done == 1);
+    */
+
+
+
 
 endmodule
