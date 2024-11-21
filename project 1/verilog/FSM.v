@@ -228,8 +228,11 @@ always @(*) begin
         end
         ONLY_DRYING_ON: begin
 
-            total_timer_start = 1; 
-            total_duration = 2*DRYING_TIME + 14 ;
+            total_timer_start = 1 ; 
+            total_duration = DRYING_TIME + DRYING_TIME + 15 ;
+
+            timer_start = 1; 
+            duration = DRYING_TIME + DRYING_TIME + 14 ;
 
             state_timer_start=1;
             state_duration = DRYING_TIME/4;
@@ -251,9 +254,9 @@ always @(*) begin
             if (state_timer_done) begin
                 next_state = ONLY_DRYING_ON;
                 state_timer_start = 0;
-                if (total_timer_done) begin
+                if (timer_done) begin
                     next_state = Finished;
-                    total_timer_start = 0;
+                    timer_start = 0;
                 end
             end
         end
@@ -314,6 +317,7 @@ always @(*) begin
         DRYING:  motor = 2; 
         ONLY_DRYING_ON: motor = 2; 
         Finished: begin
+            timer_display = 0;
             program_done = 1 ; 
             lockDoor = 0;
         end
