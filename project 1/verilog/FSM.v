@@ -31,7 +31,8 @@ module FSMW(
     output reg  [7:0] timer_display,
     output reg        program_done,
     output reg        soap_warning  ,
-    output reg        soap_in    
+    output reg        soap_in       ,
+    output reg        lockDoor
 
 );
 
@@ -128,9 +129,9 @@ always @(*) begin
         IDLE: begin
             if (power && start && doorclosed) begin
                 case (program_selection)
-                    COLD_WASH,HOT_WASH,WARM_WASH:   next_state = FILLING_WATER_SOAP; 
-                    RINSING_DRY:   next_state = RINSING;
-                    ONLY_DRY:      next_state = ONLY_DRYING; 
+                    COLD_WASH,HOT_WASH,WARM_WASH:   next_state = FILLING_WATER_SOAP;
+                    RINSING_DRY:    next_state = RINSING; 
+                    ONLY_DRY:     next_state = ONLY_DRYING; 
                     default:        next_state = IDLE;
                 endcase
             end
@@ -252,8 +253,6 @@ always @(*) begin
         
 
         Finished : begin
-          program_done = 1 ;
-          total_timer_start = 0 ; 
           next_state = IDLE;
         end
 
@@ -272,6 +271,7 @@ always @(*) begin
     motor = 0;
     soap_warning = 0;     // Default to no warning
     soap_in=0;
+    lockDoor = 0;
     timer_display = counter;
     
 
@@ -283,6 +283,7 @@ always @(*) begin
         FILLING_WATER_SOAP: begin
             if(soap)
             begin
+                lockDoor = 1;
                 soap_in=1;
                 if (program_selection == COLD_WASH) valve_in_cold = 1;
                 else if (program_selection == HOT_WASH) valve_in_hot = 1; 
@@ -292,13 +293,18 @@ always @(*) begin
         WAIT_FOR_SOAP: begin
             soap_warning = 1;   // Show soap warning
         end
-        WASHING: motor = 1;
-        RINSING: valve_in_cold = 1;
-        DRAINING_RINSE: valve_out = 1;     
-        DRAINING_WASH: valve_out = 1;
+        WASHING: begin lockDoor = 1 ; motor = 1; end
+        RINSING: begin lockDoor = 1 ; valve_in_cold = 1; end
+        DRAINING_RINSE: begin lockDoor = 1 ; valve_out = 1; end  
+        DRAINING_WASH: begin lockDoor = 1 ; valve_out = 1; end
 
-        DRYING: motor = 2;
-        ONLY_DRYING: motor = 2;
+        DRYING: begin lockDoor = 1 ; motor = 2; end
+        ONLY_DRYING: begin lockDoor = 1 ; motor = 2; end
+
+        Finished: begin
+            program_done = 1 ; 
+            lockDoor = 0;
+        end
        
         default: begin
             // No active outputs in IDLE or invalid state
