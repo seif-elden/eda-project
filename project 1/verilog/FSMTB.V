@@ -20,6 +20,7 @@ wire [7:0] timer_display;
 wire program_done;
 wire soap_warning;
 wire soap_in;
+wire lockDoor;
 
 // Instantiate the FSMW module
 FSMW uut (
@@ -37,7 +38,8 @@ FSMW uut (
     .timer_display(timer_display),
     .program_done(program_done),
     .soap_warning(soap_warning),
-    .soap_in(soap_in)
+    .soap_in(soap_in),
+    .lockDoor(lockDoor)
 );
 
 // Clock generation
@@ -107,14 +109,38 @@ initial begin
     select_program(3'b011);  // ONLY_DRY
     #1000;
 
+    $display("Starting Random Test Bench");
+
+    // repeat (10) begin //Random
+    //     initialize;
+    //     select_program($random);
+    //     soap = $random;
+    //     start = $random;
+    //     doorclosed = $random;
+    //     power = $random;
+    //     #1200;
+    // end 
+
+    // repeat (10) begin
+    //     initialize;
+    //     select_program($random);
+    //     add_soap;
+    //     repeat (10) begin
+    //     #100 doorclosed = $random; // will not effect the program
+    //          soap = $random;
+    //     end
+    //     #1200;
+    // end
+
+
     // Finish simulation
     $stop;
 end
 
 // Monitor outputs
 initial begin
-    $monitor("Time=%0t | State=%b | Valve_in_cold=%b | Valve_in_hot=%b | Valve_out=%b | Motor=%b | Timer_display=%d | Program_done=%b | Soap_warning=%b", 
-        $time, uut.current_state, valve_in_cold, valve_in_hot, valve_out, motor, timer_display, program_done, soap_warning);
+    $monitor("Time=%0t | Program=%b | Soap=%b | Door=%b | State=%b | Valve_in_cold=%b | Valve_in_hot=%b | Valve_out=%b | Motor=%b | Timer_display=%d | Program_done=%b | Soap_warning=%b | cann't open door=%b", 
+        $time, program_selection , soap , doorclosed ,uut.current_state, valve_in_cold, valve_in_hot, valve_out, motor, timer_display, program_done, soap_warning,lockDoor );
 end
 
 endmodule
