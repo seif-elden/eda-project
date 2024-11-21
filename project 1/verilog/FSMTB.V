@@ -118,8 +118,8 @@ initial begin
         start = $random;
         doorclosed = $random;
         power = $random;
-        #1200
-    end
+        #1200;
+    end 
 
     repeat (10) begin
         initialize;
@@ -129,7 +129,7 @@ initial begin
         #100 doorclosed = $random; // will not effect the program
              soap = $random;
         end
-        #1200
+        #1200;
     end
 
 
@@ -139,8 +139,8 @@ end
 
 // Monitor outputs
 initial begin
-    $monitor("Time=%0t | Program=%b | Soap=%b | Door=%b | State=%b | Valve_in_cold=%b | Valve_in_hot=%b | Valve_out=%b | Motor=%b | Timer_display=%d | Program_done=%b | Soap_warning=%b", 
-        $time, program_selection , soap , doorclosed ,uut.current_state, valve_in_cold, valve_in_hot, valve_out, motor, timer_display, program_done, soap_warning);
+    $monitor("Time=%0t | Program=%b | Soap=%b | Door=%b | State=%b | Valve_in_cold=%b | Valve_in_hot=%b | Valve_out=%b | Motor=%b | Timer_display=%d | Program_done=%b | Soap_warning=%b | cann't open door=%b", 
+        $time, program_selection , soap , doorclosed ,uut.current_state, valve_in_cold, valve_in_hot, valve_out, motor, timer_display, program_done, soap_warning,lockDoor );
 end
 
 endmodule

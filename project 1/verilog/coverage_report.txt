@@ -1,0 +1,866 @@
+Coverage Report by instance with details
+
+=================================================================================
+=== Instance: /FSMW_tb/uut/total_timer_inst
+=== Design Unit: work.timer
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         7         7         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /FSMW_tb/uut/total_timer_inst
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+------------------------------------IF Branch------------------------------------
+    12                                      3943     Count coming in to IF
+    12              1                         24     
+    15              1                       3918     
+                                               1     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    16                                      3918     Count coming in to IF
+    16              1                         57     
+    19              1                       3861     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    21                                      3861     Count coming in to IF
+    21              1                         37     
+                                            3824     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         4         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /FSMW_tb/uut/total_timer_inst --
+
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+----------------Focused Condition View-------------------
+Line       12 Item    1  (rst || ~start)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       16 Item    1  (counter == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       21 Item    1  (counter == 1)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                       8         8         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /FSMW_tb/uut/total_timer_inst --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+    11              1                       3943     
+    13              1                         24     
+    14              1                         24     
+    17              1                         57     
+    18              1                         57     
+    20              1                       3861     
+    22              1                         37     
+    23              1                         37     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         18        16         2    88.88%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /FSMW_tb/uut/total_timer_inst --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                        counter[7]           0           0        0.00 
+
+Total Node Count     =          9 
+Toggled Node Count   =          8 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      88.88% (16 of 18 bins)
+
+=================================================================================
+=== Instance: /FSMW_tb/uut/timer_inst
+=== Design Unit: work.timer
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         7         6         1    85.71%
+
+================================Branch Details================================
+
+Branch Coverage for instance /FSMW_tb/uut/timer_inst
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+------------------------------------IF Branch------------------------------------
+    12                                       532     Count coming in to IF
+    12              1                         52     
+    15              1                        480     
+                                         ***0***     All False Count
+Branch totals: 2 hits of 3 branches = 66.66%
+
+------------------------------------IF Branch------------------------------------
+    16                                       480     Count coming in to IF
+    16              1                         10     
+    19              1                        470     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    21                                       470     Count coming in to IF
+    21              1                          9     
+                                             461     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         4         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /FSMW_tb/uut/timer_inst --
+
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+----------------Focused Condition View-------------------
+Line       12 Item    1  (rst || ~start)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       16 Item    1  (counter == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       21 Item    1  (counter == 1)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                       8         8         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /FSMW_tb/uut/timer_inst --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+    11              1                        532     
+    13              1                         52     
+    14              1                         52     
+    17              1                         10     
+    18              1                         10     
+    20              1                        470     
+    22              1                          9     
+    23              1                          9     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         18        14         4    77.77%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /FSMW_tb/uut/timer_inst --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                      counter[6-7]           0           0        0.00 
+
+Total Node Count     =          9 
+Toggled Node Count   =          7 
+Untoggled Node Count =          2 
+
+Toggle Coverage      =      77.77% (14 of 18 bins)
+
+=================================================================================
+=== Instance: /FSMW_tb/uut/state_timer_inst
+=== Design Unit: work.timer
+=================================================================================
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                         7         7         0   100.00%
+
+================================Branch Details================================
+
+Branch Coverage for instance /FSMW_tb/uut/state_timer_inst
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+------------------------------------IF Branch------------------------------------
+    12                                      3877     Count coming in to IF
+    12              1                        129     
+    15              1                       3747     
+                                               1     All False Count
+Branch totals: 3 hits of 3 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    16                                      3747     Count coming in to IF
+    16              1                       1216     
+    19              1                       2531     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    21                                      2531     Count coming in to IF
+    21              1                       1206     
+                                            1325     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       4         4         0   100.00%
+
+================================Condition Details================================
+
+Condition Coverage for instance /FSMW_tb/uut/state_timer_inst --
+
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+----------------Focused Condition View-------------------
+Line       12 Item    1  (rst || ~start)
+Condition totals: 2 of 2 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       16 Item    1  (counter == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       21 Item    1  (counter == 1)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                       8         8         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /FSMW_tb/uut/state_timer_inst --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/timer.v
+    11              1                       3877     
+    13              1                        129     
+    14              1                        129     
+    17              1                       1216     
+    18              1                       1216     
+    20              1                       2531     
+    22              1                       1206     
+    23              1                       1206     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         18         8        10    44.44%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /FSMW_tb/uut/state_timer_inst --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                      counter[3-7]           0           0        0.00 
+
+Total Node Count     =          9 
+Toggled Node Count   =          4 
+Untoggled Node Count =          5 
+
+Toggle Coverage      =      44.44% (8 of 18 bins)
+
+=================================================================================
+=== Instance: /FSMW_tb/uut
+=== Design Unit: work.FSMW
+=================================================================================
+
+Assertion Coverage:
+    Assertions                      10         9         1    90.00%
+--------------------------------------------------------------------
+Name                 File(Line)                   Failure      Pass 
+                                                  Count        Count
+--------------------------------------------------------------------
+/FSMW_tb/uut/Program_Done_in_Finished
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(376)
+                                                        0          1
+/FSMW_tb/uut/Motor_Control_in_WASHING
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(371)
+                                                        0          1
+/FSMW_tb/uut/Soap_Warning_in_WAIT_FOR_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(366)
+                                                        0          1
+/FSMW_tb/uut/Valve_Control_in_FILLING_WATER_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(358)
+                                                        0          1
+/FSMW_tb/uut/Finished_State_Reached
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(352)
+                                                        0          1
+/FSMW_tb/uut/Exit_ONLY_DRYING_on_Timer_Done
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(346)
+                                                        0          1
+/FSMW_tb/uut/Total_Timer_Start_in_ONLY_DRYING
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(339)
+                                                        0          1
+/FSMW_tb/uut/Timer_Start_in_FILLING_WATER_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(334)
+                                                        0          1
+/FSMW_tb/uut/FILLING_WATER_SOAP_to_WAIT_FOR_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(326)
+                                                        0          1
+/FSMW_tb/uut/IDLE_to_FILLING_WATER_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(319)
+                                                        2          1
+Branch Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Branches                        64        63         1    98.43%
+
+================================Branch Details================================
+
+Branch Coverage for instance /FSMW_tb/uut
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v
+------------------------------------IF Branch------------------------------------
+    117                                      277     Count coming in to IF
+    117             1                         22     
+    119             1                        255     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    128                                     2601     Count coming in to CASE
+    129             1                       2369     
+    140             1                         38     
+    157             1                          2     
+    167             1                         34     
+    176             1                         35     
+    190             1                         31     
+    205             1                         31     
+    214             1                         30     
+    227             1                         24     
+    255             1                          6     
+    259             1                          1     
+Branch totals: 11 hits of 11 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    130                                     2369     Count coming in to IF
+    130             1                        187     
+                                            2182     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    131                                      187     Count coming in to CASE
+    132             1                          1     
+    132             2                          4     
+    132             3                          3     
+    133             1                          5     
+    134             1                          5     
+    135             1                        169     
+Branch totals: 6 hits of 6 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    141                                       38     Count coming in to IF
+    141             1                          2     
+    143             1                         36     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    150                                       36     Count coming in to IF
+    150             1                         17     
+                                              19     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    158                                        2     Count coming in to IF
+    158             1                          1     
+    160             1                          1     
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    170                                       34     Count coming in to IF
+    170             1                         17     
+                                              17     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    180                                       35     Count coming in to IF
+    180             1                         16     
+                                              19     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    183                                       16     Count coming in to IF
+    183             1                          4     
+                                              12     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    199                                       31     Count coming in to IF
+    199             1                         15     
+                                              16     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    208                                       31     Count coming in to IF
+    208             1                         15     
+                                              16     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    218                                       30     Count coming in to IF
+    218             1                         15     
+                                              15     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    221                                       15     Count coming in to IF
+    221             1                          5     
+                                              10     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    232                                       24     Count coming in to IF
+    232             1                         11     
+                                              13     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    237                                       24     Count coming in to IF
+    237             1                         11     
+                                              13     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    243                                       11     Count coming in to IF
+    243             1                          1     
+                                              10     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------CASE Branch------------------------------------
+    278                                     4070     Count coming in to CASE
+    279             1                       3504     
+    283             1                         69     
+    293             1                         12     
+    296             1                         85     
+    297             1                         75     
+    298             1                        105     
+    299             1                         68     
+    301             1                         90     
+    302             1                         55     
+    304             1                          6     
+    309             1                          1     
+Branch totals: 11 hits of 11 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    284                                       69     Count coming in to IF
+    284             1                         68     
+                                               1     All False Count
+Branch totals: 2 hits of 2 branches = 100.00%
+
+------------------------------------IF Branch------------------------------------
+    288                                       68     Count coming in to IF
+    288             1                         16     
+    289             1                         32     
+    290             1                         20     
+                                         ***0***     All False Count
+Branch totals: 3 hits of 4 branches = 75.00%
+
+
+Condition Coverage:
+    Enabled Coverage              Bins   Covered    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Conditions                       6         5         1    83.33%
+
+================================Condition Details================================
+
+Condition Coverage for instance /FSMW_tb/uut --
+
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v
+----------------Focused Condition View-------------------
+Line       130 Item    1  ((power && start) && doorclosed)
+Condition totals: 3 of 3 input terms covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       288 Item    1  (program_selection == 0)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       289 Item    1  (program_selection == 1)
+Condition totals: 1 of 1 input term covered = 100.00%
+
+----------------Focused Condition View-------------------
+Line       290 Item    1  (program_selection == 4)
+Condition totals: 0 of 1 input term covered = 0.00%
+
+                Input Term   Covered  Reason for no coverage   Hint
+               -----------  --------  -----------------------  --------------
+  (program_selection == 4)         N  '_0' not hit             Hit '_0'
+
+     Rows:       Hits  FEC Target                  Non-masking condition(s)      
+ ---------  ---------  --------------------        -------------------------     
+  Row   1:    ***0***  (program_selection == 4)_0  -                             
+  Row   2:          1  (program_selection == 4)_1  -                             
+
+
+FSM Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    FSM States                      10        10         0   100.00%
+    FSM Transitions                 23        16         7    69.56%
+
+================================FSM Details================================
+
+FSM Coverage for instance /FSMW_tb/uut --
+
+FSM_ID: current_state
+    Current State Object : current_state
+    ----------------------
+    State Value MapInfo :
+    ---------------------
+Line          State Name               Value
+----          ----------               -----
+ 129                IDLE                   0
+ 227         ONLY_DRYING                   8
+ 190             RINSING                   3
+ 140  FILLING_WATER_SOAP                   1
+ 167             WASHING                   2
+ 157       WAIT_FOR_SOAP                   7
+ 176       DRAINING_WASH                   4
+ 205      DRAINING_RINSE                   5
+ 214              DRYING                   6
+ 255            Finished                   9
+    Covered States :
+    ----------------
+                   State           Hit_count
+                   -----           ---------
+                    IDLE                  74          
+             ONLY_DRYING                   2          
+                 RINSING                  30          
+      FILLING_WATER_SOAP                  35          
+                 WASHING                  34          
+           WAIT_FOR_SOAP                   2          
+           DRAINING_WASH                  34          
+          DRAINING_RINSE                  30          
+                  DRYING                  30          
+                Finished                   6          
+    Covered Transitions :
+    ---------------------
+Line            Trans_ID           Hit_count          Transition          
+----            --------           ---------          ----------          
+ 134                   0                   1          IDLE -> ONLY_DRYING           
+ 133                   1                   1          IDLE -> RINSING               
+ 132                   2                   5          IDLE -> FILLING_WATER_SOAP          
+ 246                   3                   1          ONLY_DRYING -> Finished          
+ 200                   5                  15          RINSING -> DRAINING_RINSE          
+ 151                   7                  17          FILLING_WATER_SOAP -> WASHING          
+ 142                   8                   1          FILLING_WATER_SOAP -> WAIT_FOR_SOAP          
+ 171                  10                  17          WASHING -> DRAINING_WASH          
+ 159                  12                   1          WAIT_FOR_SOAP -> FILLING_WATER_SOAP          
+ 184                  14                   4          DRAINING_WASH -> RINSING          
+ 181                  15                  12          DRAINING_WASH -> FILLING_WATER_SOAP          
+ 118                  16                   1          DRAINING_WASH -> IDLE          
+ 209                  17                  15          DRAINING_RINSE -> DRYING          
+ 222                  19                   5          DRYING -> Finished            
+ 219                  20                  10          DRYING -> RINSING             
+ 256                  22                   6          Finished -> IDLE              
+    Uncovered Transitions :
+    -----------------------
+Line            Trans_ID          Transition          
+----            --------          ----------          
+ 118                   4          ONLY_DRYING -> IDLE 
+ 118                   6          RINSING -> IDLE     
+ 118                   9          FILLING_WATER_SOAP -> IDLE
+ 118                  11          WASHING -> IDLE     
+ 118                  13          WAIT_FOR_SOAP -> IDLE
+ 118                  18          DRAINING_RINSE -> IDLE
+ 118                  21          DRYING -> IDLE      
+
+
+    Summary                       Bins      Hits    Misses  Coverage
+    -------                       ----      ----    ------  --------
+        FSM States                  10        10         0   100.00%
+        FSM Transitions             23        16         7    69.56%
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      92        92         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /FSMW_tb/uut --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v
+    116             1                        277     
+    118             1                         22     
+    120             1                        255     
+    125             1                       2601     
+    126             1                       2601     
+    132             1                          8     
+    133             1                          5     
+    134             1                          5     
+    135             1                        169     
+    142             1                          2     
+    144             1                         36     
+    145             1                         36     
+    146             1                         36     
+    147             1                         36     
+    148             1                         36     
+    149             1                         36     
+    151             1                         17     
+    152             1                         17     
+    159             1                          1     
+    161             1                          1     
+    168             1                         34     
+    169             1                         34     
+    171             1                         17     
+    172             1                         17     
+    177             1                         35     
+    178             1                         35     
+    181             1                         16     
+    182             1                         16     
+    184             1                          4     
+    185             1                          4     
+    191             1                         31     
+    192             1                         31     
+    194             1                         31     
+    195             1                         31     
+    197             1                         31     
+    198             1                         31     
+    200             1                         15     
+    201             1                         15     
+    206             1                         31     
+    207             1                         31     
+    209             1                         15     
+    210             1                         15     
+    215             1                         30     
+    216             1                         30     
+    219             1                         15     
+    220             1                         15     
+    222             1                          5     
+    223             1                          5     
+    229             1                         24     
+    230             1                         24     
+    233             1                         11     
+    234             1                         11     
+    239             1                         11     
+    241             1                         11     
+    244             1                          1     
+    245             1                          1     
+    246             1                          1     
+    247             1                          1     
+    256             1                          6     
+    260             1                          1     
+    266             1                       4070     
+    268             1                       4070     
+    269             1                       4070     
+    270             1                       4070     
+    271             1                       4070     
+    272             1                       4070     
+    273             1                       4070     
+    274             1                       4070     
+    275             1                       4070     
+    280             1                       3504     
+    281             1                       3504     
+    286             1                         68     
+    287             1                         68     
+    288             1                         16     
+    289             1                         32     
+    290             1                         20     
+    290             2                         20     
+    294             1                         12     
+    296             1                         85     
+    296             2                         85     
+    297             1                         75     
+    297             2                         75     
+    298             1                        105     
+    298             2                        105     
+    299             1                         68     
+    299             2                         68     
+    301             1                         90     
+    301             2                         90     
+    302             1                         55     
+    302             2                         55     
+    305             1                          6     
+    306             1                          6     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                        126        98        28    77.77%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /FSMW_tb/uut --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                        counter[7]           0           0        0.00 
+                                       duration[0]           0           0        0.00 
+                                     duration[3-7]           0           0        0.00 
+                               state_duration[3-7]           0           0        0.00 
+                                  timer_display[7]           0           0        0.00 
+                                 total_duration[7]           0           0        0.00 
+
+Total Node Count     =         63 
+Toggled Node Count   =         49 
+Untoggled Node Count =         14 
+
+Toggle Coverage      =      77.77% (98 of 126 bins)
+
+=================================================================================
+=== Instance: /FSMW_tb
+=== Design Unit: work.FSMW_tb
+=================================================================================
+Statement Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Statements                      56        56         0   100.00%
+
+================================Statement Details================================
+
+Statement Coverage for instance /FSMW_tb --
+
+    Line         Item                      Count     Source 
+    ----         ----                      -----     ------ 
+  File E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSMTB.V
+    46              1                       7978     
+    46              2                       7977     
+    51              1                         21     
+    52              1                         21     
+    53              1                         21     
+    54              1                         21     
+    55              1                         21     
+    56              1                         21     
+    57              1                         21     
+    58              1                         21     
+    58              2                         21     
+    65              1                         25     
+    66              1                         25     
+    67              1                         25     
+    67              2                         25     
+    74              1                         13     
+    74              2                         13     
+    80              1                          1     
+    81              1                          1     
+    84              1                          1     
+    85              1                          1     
+    86              1                          1     
+    87              1                          1     
+    90              1                          1     
+    91              1                          1     
+    91              2                          1     
+    92              1                          1     
+    93              1                          1     
+    97              1                          1     
+    98              1                          1     
+    99              1                          1     
+    100             1                          1     
+    105             1                          1     
+    106             1                          1     
+    109             1                          1     
+    110             1                          1     
+    112             1                          1     
+    114             1                         10     
+    115             1                         10     
+    116             1                         10     
+    117             1                         10     
+    118             1                         10     
+    119             1                         10     
+    120             1                         10     
+    121             1                         10     
+    124             1                         10     
+    125             1                         10     
+    126             1                         10     
+    127             1                         10     
+    128             1                        100     
+    129             1                        100     
+    129             2                        100     
+    130             1                        100     
+    132             1                         10     
+    137             1                          1     
+    142             1                          1     
+Toggle Coverage:
+    Enabled Coverage              Bins      Hits    Misses  Coverage
+    ----------------              ----      ----    ------  --------
+    Toggles                         52        50         2    96.15%
+
+================================Toggle Details================================
+
+Toggle Coverage for instance /FSMW_tb --
+
+                                              Node      1H->0L      0L->1H  "Coverage"
+                                              ---------------------------------------
+                                  timer_display[7]           0           0        0.00 
+
+Total Node Count     =         26 
+Toggled Node Count   =         25 
+Untoggled Node Count =          1 
+
+Toggle Coverage      =      96.15% (50 of 52 bins)
+
+
+ASSERTION RESULTS:
+--------------------------------------------------------------------
+Name                 File(Line)                   Failure      Pass 
+                                                  Count        Count
+--------------------------------------------------------------------
+/FSMW_tb/uut/Program_Done_in_Finished
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(376)
+                                                        0          1
+/FSMW_tb/uut/Motor_Control_in_WASHING
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(371)
+                                                        0          1
+/FSMW_tb/uut/Soap_Warning_in_WAIT_FOR_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(366)
+                                                        0          1
+/FSMW_tb/uut/Valve_Control_in_FILLING_WATER_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(358)
+                                                        0          1
+/FSMW_tb/uut/Finished_State_Reached
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(352)
+                                                        0          1
+/FSMW_tb/uut/Exit_ONLY_DRYING_on_Timer_Done
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(346)
+                                                        0          1
+/FSMW_tb/uut/Total_Timer_Start_in_ONLY_DRYING
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(339)
+                                                        0          1
+/FSMW_tb/uut/Timer_Start_in_FILLING_WATER_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(334)
+                                                        0          1
+/FSMW_tb/uut/FILLING_WATER_SOAP_to_WAIT_FOR_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(326)
+                                                        0          1
+/FSMW_tb/uut/IDLE_to_FILLING_WATER_SOAP
+                     E:/asu-seif/5)fall-2024-junior/CSE312 - Electronic Design Automation/eda-project/project 1/verilog/FSM.v(319)
+                                                        2          1
+
+Total Coverage By Instance (filtered view): 90.26%
+

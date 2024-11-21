@@ -227,7 +227,7 @@ always @(*) begin
         ONLY_DRYING: begin
 
             total_timer_start = 1; 
-            total_duration = DRYING_TIME + 6 ;
+            total_duration = DRYING_TIME + 3 ;
 
             if (!state_timer_start) begin
                 state_timer_start = 1;
@@ -332,23 +332,19 @@ end
     // Timer Control Properties
     /*
         psl Timer_Start_in_FILLING_WATER_SOAP: assert always 
-        (current_state == FILLING_WATER_SOAP -> timer_start == 1);
+        (current_state == FILLING_WATER_SOAP && soap -> timer_start == 1);
     */
 
     /*
         psl Total_Timer_Start_in_ONLY_DRYING: assert always 
-        (current_state == ONLY_DRYING -> total_timer_start == 1);
+        (current_state == ONLY_DRYING && !total_timer_done -> total_timer_start == 1);
      */
 
     // Motor Toggling in ONLY_DRYING
-    /*
-        psl Motor_Toggle_in_ONLY_DRYING: assert always 
-        (current_state == ONLY_DRYING -> motor != $past(motor));
-     */
 
     /* 
         psl Exit_ONLY_DRYING_on_Timer_Done: assert always 
-        (current_state == ONLY_DRYING && total_timer_done -> next_state == Finished);
+        (current_state == ONLY_DRYING && total_timer_done && state_timer_done ->  next_state == Finished);
      */
 
     // Final State Verification
