@@ -82,7 +82,7 @@ initial begin
 
     // Test COLD_WASH program WITH SOAP
     add_soap;
-    select_program(3'b001);  // COLD_WASH
+    select_program(3'b000);  // COLD_WASH
     #1200;  // Wait for the program to complete
     soap = 0;
 
@@ -107,30 +107,30 @@ initial begin
 
     // Test ONLY_DRY program
     select_program(3'b011);  // ONLY_DRY
-    #1000;
+    #500;
 
     $display("Starting Random Test Bench");
 
-    // repeat (10) begin //Random
-    //     initialize;
-    //     select_program($random);
-    //     soap = $random;
-    //     start = $random;
-    //     doorclosed = $random;
-    //     power = $random;
-    //     #1200;
-    // end 
+    repeat (10) begin //Random
+        initialize;
+        select_program($random);
+        soap = $random;
+        start = $random;
+        doorclosed = $random;
+        power = $random;
+        #1200;
+    end 
 
-    // repeat (10) begin
-    //     initialize;
-    //     select_program($random);
-    //     add_soap;
-    //     repeat (10) begin
-    //     #100 doorclosed = $random; // will not effect the program
-    //          soap = $random;
-    //     end
-    //     #1200;
-    // end
+    repeat (10) begin
+        initialize;
+        select_program($random);
+        add_soap;
+        repeat (10) begin
+        #100 doorclosed = $random; // will not effect the program
+             soap = $random;
+        end
+        #1200;
+    end
 
 
     // Finish simulation
