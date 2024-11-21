@@ -99,7 +99,9 @@ initial begin
     #1200;
     soap = 0;
 
-
+    // Test WARM_WASH program
+    select_program(3'b100);  //  WARM_WASH
+    #600;
 
     // Test RINSING_DRY program
     select_program(3'b010);  // RINSING_DRY
