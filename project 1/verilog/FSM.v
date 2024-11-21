@@ -48,7 +48,8 @@ parameter RINSING               = 4'b0011;
 parameter DRAINING_RINSE        = 4'b0101;
 parameter DRYING                = 4'b0110;
 parameter WAIT_FOR_SOAP         = 4'b0111;   
-parameter ONLY_DRYING           = 4'b1000;
+parameter ONLY_DRYING_ON           = 4'b1000;
+parameter ONLY_DRYING_OFF           = 4'b1010;
 parameter Finished              = 4'b1001;
 
 // Program timer 
@@ -113,10 +114,11 @@ parameter R_DRAINING_TIME  = 8'd15;  // Example: 15 cycles
 parameter DRYING_TIME    = 8'd12; // Example: 12 cycles
 
 // State Machine
-always @(posedge clk or posedge rst) begin
-    if (rst) begin
+always @(posedge clk or posedge rst or negedge power) begin
+    if (rst || !power) begin
         current_state <= IDLE;
-    end else begin
+    end 
+    else begin
         current_state <= next_state;
     end
 end
@@ -131,7 +133,7 @@ always @(*) begin
                 case (program_selection)
                     COLD_WASH,HOT_WASH,WARM_WASH:   next_state = FILLING_WATER_SOAP;
                     RINSING_DRY:    next_state = RINSING; 
-                    ONLY_DRY:     next_state = ONLY_DRYING; 
+                    ONLY_DRY:     next_state = ONLY_DRYING_ON; 
                     default:        next_state = IDLE;
                 endcase
             end
@@ -224,30 +226,39 @@ always @(*) begin
                 end
             end
         end
-        ONLY_DRYING: begin
+        ONLY_DRYING_ON: begin
 
             total_timer_start = 1; 
-            total_duration = DRYING_TIME + 3 ;
+            total_duration = 2*DRYING_TIME + 14 ;
 
-            if (!state_timer_start) begin
-                state_timer_start = 1;
-                state_duration = DRYING_TIME / 4;
-            end
-        
+            state_timer_start=1;
+            state_duration = DRYING_TIME/4;
+
             if (state_timer_done) begin
-                // Toggle motor state
-                motor = 2'b00; 
-                // Restart the state timer
-                state_timer_start = 0; 
-        
-                if (total_timer_done) begin
-                    motor = 2'b00; 
-                    total_timer_start = 0 ;  
-                    next_state = Finished;
-                    program_done = 1 ;
-                end
-            end 
+                next_state = ONLY_DRYING_OFF;
+                state_timer_start = 0;
+                
+            end
+            
+
+
         end
+
+        ONLY_DRYING_OFF: begin
+
+            state_timer_start=1;
+            state_duration = DRYING_TIME/4;
+            if (state_timer_done) begin
+                next_state = ONLY_DRYING_ON;
+                state_timer_start = 0;
+                if (total_timer_done) begin
+                    next_state = Finished;
+                    total_timer_start = 0;
+                end
+            end
+        end
+
+
         
 
         
@@ -271,7 +282,7 @@ always @(*) begin
     motor = 0;
     soap_warning = 0;     // Default to no warning
     soap_in=0;
-    lockDoor = 0;
+    lockDoor = 1;
     timer_display = counter;
     
 
@@ -279,11 +290,13 @@ always @(*) begin
         IDLE : begin
             program_done = 0;
             timer_start = 0;
+            timer_display = 0;
+            lockDoor = 0;
+
         end
         FILLING_WATER_SOAP: begin
             if(soap)
             begin
-                lockDoor = 1;
                 soap_in=1;
                 if (program_selection == COLD_WASH) valve_in_cold = 1;
                 else if (program_selection == HOT_WASH) valve_in_hot = 1; 
@@ -293,14 +306,13 @@ always @(*) begin
         WAIT_FOR_SOAP: begin
             soap_warning = 1;   // Show soap warning
         end
-        WASHING: begin lockDoor = 1 ; motor = 1; end
-        RINSING: begin lockDoor = 1 ; valve_in_cold = 1; end
-        DRAINING_RINSE: begin lockDoor = 1 ; valve_out = 1; end  
-        DRAINING_WASH: begin lockDoor = 1 ; valve_out = 1; end
+        WASHING:  motor = 1; 
+        RINSING:    valve_in_cold = 1; 
+        DRAINING_RINSE:  valve_out = 1;   
+        DRAINING_WASH:  valve_out = 1; 
 
-        DRYING: begin lockDoor = 1 ; motor = 2; end
-        ONLY_DRYING: begin lockDoor = 1 ; motor = 2; end
-
+        DRYING:  motor = 2; 
+        ONLY_DRYING_ON: motor = 2; 
         Finished: begin
             program_done = 1 ; 
             lockDoor = 0;
@@ -335,17 +347,6 @@ end
         (current_state == FILLING_WATER_SOAP && soap -> timer_start == 1);
     */
 
-    /*
-        psl Total_Timer_Start_in_ONLY_DRYING: assert always 
-        (current_state == ONLY_DRYING && !total_timer_done -> total_timer_start == 1);
-     */
-
-    // Motor Toggling in ONLY_DRYING
-
-    /* 
-        psl Exit_ONLY_DRYING_on_Timer_Done: assert always 
-        (current_state == ONLY_DRYING && total_timer_done && state_timer_done ->  next_state == Finished);
-     */
 
     // Final State Verification
     /* 
