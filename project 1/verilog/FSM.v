@@ -351,6 +351,18 @@ end
         (current_state == FILLING_WATER_SOAP && soap -> timer_start == 1);
     */
 
+    // only drying 
+
+    /*
+    psl ONLY_DRYING_ON_to_ONLY_DRYING_OFF: assert always 
+    (current_state == ONLY_DRYING_ON && state_timer_done -> next_state == ONLY_DRYING_OFF && state_timer_start == 0);
+    */
+
+    /*
+        psl ONLY_DRYING_OFF_to_Finished: assert always 
+        (current_state == ONLY_DRYING_OFF && state_timer_done && timer_done -> next_state == Finished && timer_start == 0);
+    */
+
 
     // Final State Verification
     /* 
