@@ -107,6 +107,8 @@ initial begin
     select_program(3'b011);  // ONLY_DRY
     #1000;
 
+    // RANDOM TEST CASES
+
     // Finish simulation
     $stop;
 end
