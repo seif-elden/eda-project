@@ -140,7 +140,7 @@ always @(*) begin
         end
 
         FILLING_WATER_SOAP: begin
-            if (!soap && !total_timer_start) begin
+            if (!soap && timer_start != 1) begin
                 next_state = WAIT_FOR_SOAP;   // Transition to WAIT_FOR_SOAP if soap is not added
             end else begin
                 timer_start = 1;
@@ -336,7 +336,7 @@ end
 
     /*
         psl FILLING_WATER_SOAP_to_WAIT_FOR_SOAP: assert always 
-        ((current_state == FILLING_WATER_SOAP && !soap && total_timer_start !=1) 
+        ((current_state == FILLING_WATER_SOAP && !soap && timer_start !=1) 
         -> next_state == WAIT_FOR_SOAP);
      */
 
