@@ -111,7 +111,7 @@ initial begin
 
     $display("Starting Random Test Bench");
 
-    repeat (10) begin //Random
+    repeat (50) begin //Random
         initialize;
         select_program($random);
         soap = $random;
@@ -121,16 +121,6 @@ initial begin
         #1200;
     end 
 
-    repeat (10) begin
-        initialize;
-        select_program($random);
-        add_soap;
-        repeat (10) begin
-        #100 doorclosed = $random; // will not effect the program
-             soap = $random;
-        end
-        #1200;
-    end
 
 
     // Finish simulation

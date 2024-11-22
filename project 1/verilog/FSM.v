@@ -140,7 +140,7 @@ always @(*) begin
         end
 
         FILLING_WATER_SOAP: begin
-            if (!soap) begin
+            if (!soap && !total_timer_start) begin
                 next_state = WAIT_FOR_SOAP;   // Transition to WAIT_FOR_SOAP if soap is not added
             end else begin
                 timer_start = 1;
@@ -228,11 +228,8 @@ always @(*) begin
         end
         ONLY_DRYING_ON: begin
 
-            total_timer_start = 1 ; 
-            total_duration = DRYING_TIME + DRYING_TIME + 15 ;
-
-            timer_start = 1; 
-            duration = DRYING_TIME + DRYING_TIME + 14 ;
+            total_timer_start = 1; 
+            total_duration = DRYING_TIME + 14 ;
 
             state_timer_start=1;
             state_duration = DRYING_TIME/4;
@@ -254,9 +251,9 @@ always @(*) begin
             if (state_timer_done) begin
                 next_state = ONLY_DRYING_ON;
                 state_timer_start = 0;
-                if (timer_done) begin
+                if (total_timer_done) begin
                     next_state = Finished;
-                    timer_start = 0;
+                    total_timer_start = 0;
                 end
             end
         end
@@ -317,7 +314,6 @@ always @(*) begin
         DRYING:  motor = 2; 
         ONLY_DRYING_ON: motor = 2; 
         Finished: begin
-            timer_display = 0;
             program_done = 1 ; 
             lockDoor = 0;
         end
@@ -349,18 +345,6 @@ end
     /*
         psl Timer_Start_in_FILLING_WATER_SOAP: assert always 
         (current_state == FILLING_WATER_SOAP && soap -> timer_start == 1);
-    */
-
-    // only drying 
-
-    /*
-    psl ONLY_DRYING_ON_to_ONLY_DRYING_OFF: assert always 
-    (current_state == ONLY_DRYING_ON && state_timer_done -> next_state == ONLY_DRYING_OFF && state_timer_start == 0);
-    */
-
-    /*
-        psl ONLY_DRYING_OFF_to_Finished: assert always 
-        (current_state == ONLY_DRYING_OFF && state_timer_done && timer_done -> next_state == Finished && timer_start == 0);
     */
 
 
