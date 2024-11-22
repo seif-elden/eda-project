@@ -13,7 +13,7 @@
 // PURPOSE: finite state machine act as controller for the washing machine
 
 
-module FSMW(
+module FSM(
     // INPUTS
     input  wire       power,
     input  wire       clk,
@@ -336,7 +336,7 @@ end
 
     /*
         psl FILLING_WATER_SOAP_to_WAIT_FOR_SOAP: assert always 
-        ((current_state == FILLING_WATER_SOAP && !soap) 
+        ((current_state == FILLING_WATER_SOAP && !soap && total_timer_start !=1) 
         -> next_state == WAIT_FOR_SOAP);
      */
 

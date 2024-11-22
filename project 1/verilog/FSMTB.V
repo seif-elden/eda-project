@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module FSMW_tb;
+module FSMTB;
 
 // Inputs
 reg power;
@@ -23,7 +23,7 @@ wire soap_in;
 wire lockDoor;
 
 // Instantiate the FSMW module
-FSMW uut (
+FSM uut (
     .power(power),
     .clk(clk),
     .rst(rst),
@@ -112,12 +112,10 @@ initial begin
     $display("Starting Random Test Bench");
 
     repeat (50) begin //Random
-        initialize;
-        select_program($random);
         soap = $random;
-        start = $random;
         doorclosed = $random;
         power = $random;
+        select_program($random);
         #1200;
     end 
 
